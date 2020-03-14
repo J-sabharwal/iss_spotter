@@ -1,11 +1,38 @@
-const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, nextISSTimesForMyLocation } = require('./iss');
+const { nextISSTimesForMyLocation } = require('./iss');
 
 // Call back function
 // 2 params - error and ip
 // if error occurs call callback(error, null)
 // if no error call callback(null, ip)
+
+nextISSTimesForMyLocation((error, passTimes) => {
+  if (error) {
+    return console.log(`It didn't work!`, error);
+  } else {
+    for (const rise of passTimes) {
+      const time = new Date(rise.risetime * 1000);
+      const timeZone = time.toLocaleString('en-CA', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        hour12: false,
+        minute: 'numeric',
+        second: 'numeric',
+        timeZone: 'America/Vancouver',
+        timeZoneName: 'short'
+      });
+      console.log(`Next pass at ${timeZone} for ${rise.duration} seconds!`);
+    }
+  }
+});
+
+
+// *********** Nested Code Example **********
+//
 // fetchMyIP((error, ip) => {
- 
+  
 //   if (error) {
 //     console.log("It didn't work!", error);
 //     return;
@@ -38,14 +65,3 @@ const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes, nextISSTimesForMyLocat
 //   }
 // });
 
-nextISSTimesForMyLocation((error, passTimes) => {
-  if (error) {
-    return console.log(`It didn't work!`, error);
-  } else {
-    for (const rise of passTimes) {
-      const time = new Date(rise.risetime * 1000);
-      const timeZone = time.toLocaleString('en-CA', {weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', hour12: false, minute: 'numeric', second: 'numeric', timeZone: 'America/Vancouver', timeZoneName: 'short'});
-      console.log(`Next pass at ${timeZone} for ${rise.duration} seconds!`);
-    }
-  }
-});
